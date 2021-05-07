@@ -3,15 +3,14 @@ import { AuthContext } from '../contexts/AuthContext';
 import { api } from '../services/apiClient';
 import { setupAPIClient } from '../services/api';
 import { withSSRAuth } from '../utils/withSSRAuth';
-import { useCan } from '../hooks/useCan';
+import { Can } from '../components/Can';
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
 
   // Por mais que utilizemos as verificações no front-end,
   // é importante lembrar que o backend também precisa validar
   // se as métricas, ou qualquer outra informação pode ser acessada por aquele usuário
-  const userCanSeeMetrics = useCan({ permissions: ['metrics.list'] });
 
   useEffect(() => {
     api
@@ -23,7 +22,13 @@ const Dashboard = () => {
   return (
     <>
       <h1>Dashboard: {user?.email}</h1>
-      {userCanSeeMetrics && <div>Métricas</div>}
+      <Can permissions={['metrics.list']}>
+        <div>Métricas</div>
+      </Can>
+
+      <button type="button" onClick={signOut}>
+        Sign Out
+      </button>
     </>
   );
 };
