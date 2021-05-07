@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { parseCookies, setCookie } from 'nookies';
+import { signOut } from '../contexts/AuthContext';
 
 let cookies = parseCookies();
 let isRefreshing = false;
@@ -87,7 +88,13 @@ api.interceptors.response.use(
         });
       } else {
         // deslogar o usuário
+        signOut();
       }
     }
+
+    // Se o erro não se encaixar nas condições acima,
+    // deixamos ele prosseguir para o catch
+    // presente nas requisições de cada página.
+    return Promise.reject(error);
   }
 );

@@ -16,6 +16,7 @@ type SignInCredentials = {
 
 type AuthContextData = {
   signIn(credentials): Promise<void>;
+  signOut(): void;
   isAuthenticated: boolean;
   user: User;
 };
@@ -25,6 +26,13 @@ type AuthProviderProps = {
 };
 
 export const AuthContext = createContext({} as AuthContextData);
+
+export function signOut() {
+  destroyCookie(undefined, '@Rocketseat:NextAuth.token');
+  destroyCookie(undefined, '@Rocketseat:NextAuth.refreshToken');
+
+  Router.push('/');
+}
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>();
@@ -41,10 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser({ email, permissions, roles });
         })
         .catch((err) => {
-          destroyCookie(undefined, '@Rocketseat:NextAuth.token');
-          destroyCookie(undefined, '@Rocketseat:NextAuth.refreshToken');
-
-          Router.push('/');
+          signOut();
         });
     }
   }, []);
@@ -87,7 +92,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ signIn, isAuthenticated, user }}>
+    <AuthContext.Provider value={{ signIn, isAuthenticated, user, signOut }}>
       {children}
     </AuthContext.Provider>
   );
