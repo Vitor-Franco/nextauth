@@ -81,11 +81,20 @@ export function setupAPIClient(ctx = undefined) {
               });
           }
 
+          // Se já estiver ocorrendo um refresh,
+          // Eu adiciono no array de Requests, essa chamada atual.
           return new Promise((resolve, reject) => {
+            // Para esse array, disponibilizamos um objeto
+            // com dois métodos:
+            // -> onSuccess, caso a atualização de token dê certo.
+            // -> onFailure, caso o token falhe.
             failedRequestsQueue.push({
+              // Para isso recebemos o parâmetro do novo token,
+              // e o setamos nos headers.
               onSuccess: (token: string) => {
                 originalConfig.headers['Authorization'] = `Bearer ${token}`;
 
+                // Refazemos a chamada original, apenas atualizando o token.
                 resolve(api(originalConfig));
               },
               onFailure: (err: AxiosError) => {
