@@ -83,6 +83,8 @@ export function setupAPIClient(ctx = undefined) {
 
           // Se já estiver ocorrendo um refresh,
           // Eu adiciono no array de Requests, essa chamada atual.
+
+          // Retornamos uma promise, para manter o await ativo até o resolve/reject ocorrer.
           return new Promise((resolve, reject) => {
             // Para esse array, disponibilizamos um objeto
             // com dois métodos:
